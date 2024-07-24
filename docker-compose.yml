@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: library_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - library_pg_data:/var/lib/postgresql/data
+    networks:
+      - library_network
+
+  library_django_backend:
+    build:
+      context: ./library_manager
+    container_name: library_django_backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+    volumes:
+      - library_static_volume:/app/static
+    networks:
+      - library_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.25.5-alpine
+    container_name: library_nginx
+    restart: unless-stopped
+    ports:
+      - '8000:80'
+    volumes:
+      - ./conf/nginx.conf:/etc/nginx/nginx.conf
+      - library_static_volume:/static
+    networks:
+      - library_network
+    depends_on:
+      - library_django_backend
+
+volumes:
+  library_pg_data:
+  library_static_volume:
+
+networks:
+  library_network:
+    driver: bridge
