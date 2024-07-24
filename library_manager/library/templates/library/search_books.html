@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 800px;">
+    <h1 class="mb-4 text-center">Поиск книг</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.keyword.label_tag }}
+            {{ form.keyword }}
+        </div>
+        <button type="submit" class="btn btn-secondary">Поиск</button>
+    </form>
+
+    {% if books %}
+    <table class="table table-striped mt-4">
+        <thead>
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">Название</th>
+            <th scope="col">Автор</th>
+            <th scope="col">Год</th>
+            <th scope="col">Статус</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.id }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.year }}</td>
+            <td>{{ book.status }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% elif form.is_bound %}
+    <p class="mt-4 text-center">Поиск не дал результатов.</p>
+    {% endif %}
+
+    <a href="{% url 'library:index' %}" class="btn btn-primary mt-4">На главную</a>
+</div>
+{% endblock content %}

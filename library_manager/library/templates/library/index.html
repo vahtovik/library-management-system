@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4" style="max-width: 400px;">
+    <h1 class="mb-4 text-center">Главная</h1>
+    <div class="list-group">
+        <a href="{% url 'library:add-book' %}" class="list-group-item list-group-item-action text-center">
+            Добавить книгу
+        </a>
+        <a href="{% url 'library:search-books' %}" class="list-group-item list-group-item-action text-center">
+            Поиск книг
+        </a>
+        <a href="{% url 'library:display-books' %}" class="list-group-item list-group-item-action text-center">
+            Все книги
+        </a>
+    </div>
+</div>
+{% endblock content %}

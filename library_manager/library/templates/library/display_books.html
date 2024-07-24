@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px;">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">Название</th>
+            <th scope="col">Автор</th>
+            <th scope="col">Год</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.id }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.year }}</td>
+            <td>{{ book.status }}</td>
+            <td>
+                <a href="{% url 'library:delete-book' book.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                <a href="{% url 'library:update-status' book.id %}" class="btn btn-warning btn-sm">Изменить статус</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center mt-3">
+        <a href="{% url 'library:index' %}" class="btn btn-primary">На главную</a>
+    </div>
+</div>
+{% endblock content %}
